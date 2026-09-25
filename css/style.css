@@ -1,0 +1,579 @@
+/* ==========================================================================
+   기본 설정
+   ========================================================================== */
+
+:root {
+  --jeju-blue-deep: #0a3d62;
+  --jeju-blue: #1e6fa8;
+  --jeju-blue-light: #4fb0e6;
+  --jeju-blue-pale: #eaf6fc;
+  --jeju-white: #ffffff;
+  --jeju-accent: #ff9f43;
+  --correct-color: #2ecc71;
+  --wrong-color: #e74c3c;
+
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 4px 14px rgba(10, 61, 98, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;
+  background: var(--jeju-blue-pale);
+  color: var(--jeju-blue-deep);
+  overscroll-behavior: none;
+}
+
+input, textarea {
+  user-select: text;
+}
+
+button {
+  touch-action: manipulation;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+.screen {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ==========================================================================
+   ① 난이도 선택 화면
+   ========================================================================== */
+
+#difficulty-screen {
+  background: linear-gradient(180deg, var(--jeju-blue-deep) 0%, var(--jeju-blue) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.difficulty-inner {
+  text-align: center;
+  color: var(--jeju-white);
+}
+
+.app-title {
+  font-size: 26px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.app-subtitle {
+  opacity: 0.85;
+  margin-bottom: 32px;
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.difficulty-btn {
+  background: var(--jeju-white);
+  color: var(--jeju-blue-deep);
+  border-radius: var(--radius-md);
+  padding: 24px 28px;
+  min-width: 130px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform 0.15s ease;
+}
+
+.difficulty-btn:active {
+  transform: scale(0.96);
+}
+
+.difficulty-emoji {
+  font-size: 32px;
+}
+
+/* ==========================================================================
+   ② 지도 화면
+   ========================================================================== */
+
+.map-header {
+  padding: 16px 20px 8px;
+  text-align: center;
+}
+
+.map-header h2 {
+  margin: 0 0 4px;
+  color: var(--jeju-blue-deep);
+}
+
+.map-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--jeju-blue);
+}
+
+.map-type-toggle {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 0 16px 12px;
+}
+
+.map-type-btn {
+  flex: 1;
+  max-width: 200px;
+  background: var(--jeju-blue-pale);
+  color: var(--jeju-blue-deep);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.map-type-btn.active {
+  background: var(--jeju-blue);
+  color: var(--jeju-white);
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.map-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* 마커: % 좌표 기준 절대 위치 */
+.map-marker {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: var(--jeju-blue);
+  color: var(--jeju-white);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.map-marker::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0 6px;
+  border-style: solid;
+  border-color: var(--jeju-blue) transparent transparent transparent;
+}
+
+.map-marker.marker-completed {
+  background: var(--jeju-blue-deep);
+  opacity: 0.55;
+}
+.map-marker.marker-completed::after {
+  border-top-color: var(--jeju-blue-deep);
+}
+
+.map-marker.marker-active {
+  background: var(--jeju-accent);
+  animation: marker-blink 1.1s ease-in-out infinite;
+}
+.map-marker.marker-active::after {
+  border-top-color: var(--jeju-accent);
+}
+
+@keyframes marker-blink {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 159, 67, 0.6); }
+  50% { box-shadow: 0 0 0 10px rgba(255, 159, 67, 0); }
+}
+
+/* ==========================================================================
+   ③ 미션 화면 (모달)
+   ========================================================================== */
+
+.mission-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 61, 98, 0.55);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+}
+
+.mission-panel {
+  background: var(--jeju-white);
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  padding: 18px 20px 28px;
+  animation: sheet-up 0.25s ease-out;
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.mission-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--jeju-blue-deep);
+}
+
+.mission-close-btn {
+  background: var(--jeju-blue-pale);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 15px;
+  color: var(--jeju-blue-deep);
+}
+
+.mission-question {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.mission-hint {
+  font-size: 13px;
+  color: var(--jeju-blue);
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
+.mission-feedback {
+  min-height: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 14px;
+}
+.mission-feedback.correct { color: var(--correct-color); }
+.mission-feedback.wrong { color: var(--wrong-color); }
+
+.mission-reference-image {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+}
+
+/* ---- 유형 A: 코드 브레이킹 ---- */
+
+.cipher-box {
+  background: var(--jeju-blue-deep);
+  color: var(--jeju-white);
+  letter-spacing: 2px;
+  font-size: 20px;
+  text-align: center;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+}
+
+.mission-text-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 2px solid var(--jeju-blue-light);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+.mission-text-input:focus {
+  outline: none;
+  border-color: var(--jeju-blue);
+}
+
+.mission-submit-btn {
+  width: 100%;
+  background: var(--jeju-blue);
+  color: var(--jeju-white);
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+}
+.mission-submit-btn:active { transform: scale(0.98); }
+.mission-submit-btn:disabled { opacity: 0.5; }
+
+/* ---- 유형 B: 관측 선택 ---- */
+
+.observation-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.observation-option-card {
+  background: var(--jeju-blue-pale);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--jeju-blue-deep);
+  border: 2px solid transparent;
+}
+
+.observation-option-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.observation-option-card.correct {
+  border-color: var(--correct-color);
+  background: #eafaf1;
+}
+.observation-option-card.wrong {
+  border-color: var(--wrong-color);
+  background: #fdecea;
+}
+.observation-option-card:disabled { opacity: 0.85; }
+
+/* ---- 유형 C: 매칭/연결 ---- */
+
+.matching-area {
+  display: flex;
+  gap: 12px;
+}
+
+.matching-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.matching-item {
+  background: var(--jeju-blue-pale);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--jeju-blue-deep);
+  text-align: center;
+}
+
+.matching-item.selected {
+  border-color: var(--jeju-accent);
+  background: #fff4e8;
+}
+
+.matching-item.matched {
+  background: #eafaf1;
+  border-color: var(--correct-color);
+  opacity: 0.75;
+}
+
+.matching-item-right.wrong-flash {
+  animation: shake 0.35s;
+  border-color: var(--wrong-color);
+}
+
+@keyframes shake {
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ---- 유형 D: 오류 수정 ---- */
+
+.errorfix-text-box {
+  font-size: 16px;
+  line-height: 1.9;
+  background: var(--jeju-blue-pale);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+}
+
+.errorfix-segment {
+  background: #ffe1e1;
+  color: var(--wrong-color);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.errorfix-segment.fixed {
+  background: #d7f7e4;
+  color: var(--correct-color);
+}
+
+/* ---- 유형 E: 퀴즈 ---- */
+
+.quiz-ox-box {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+}
+
+.quiz-ox-btn {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--jeju-blue-pale);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--jeju-blue-deep);
+  border: 3px solid transparent;
+}
+
+.quiz-multiple-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-multiple-btn {
+  background: var(--jeju-blue-pale);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 13px 14px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--jeju-blue-deep);
+}
+
+.quiz-ox-btn.correct,
+.quiz-multiple-btn.correct {
+  border-color: var(--correct-color);
+  background: #eafaf1;
+}
+.quiz-ox-btn.wrong,
+.quiz-multiple-btn.wrong {
+  border-color: var(--wrong-color);
+  background: #fdecea;
+}
+.quiz-ox-btn:disabled,
+.quiz-multiple-btn:disabled { opacity: 0.85; }
+
+/* ==========================================================================
+   이펙트: 색종이 + 다음 장소 안내 배너
+   ========================================================================== */
+
+.confetti-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 200;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  border-radius: 2px;
+  animation-name: confetti-fall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.next-location-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, -20px);
+  background: var(--jeju-blue-deep);
+  color: var(--jeju-white);
+  padding: 12px 22px;
+  border-radius: 999px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: var(--shadow-soft);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 210;
+  text-align: center;
+  max-width: 90%;
+}
+
+.next-location-banner.visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.next-location-label {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.next-location-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   반응형 (태블릿 이상)
+   ========================================================================== */
+
+@media (min-width: 600px) {
+  .mission-screen {
+    align-items: center;
+    justify-content: center;
+  }
+  .mission-panel {
+    max-width: 460px;
+    border-radius: 20px;
+  }
+}
